@@ -117,9 +117,10 @@ Arrays.stream(CoinType.values())
 ```
 
 ## 金額から enum 値を返すメソッドを追加する
+
 金額から enum 値（インスタンス）を返す static メソッド priceOf() を追加すると enum は次のようになる。
 
-```java
+``` java
 import java.util.Arrays;
 
 enum CoinType {
@@ -159,17 +160,47 @@ enum CoinType {
 
 この enum を main メソッドから利用してみる。
 
-```java
+``` java
 System.out.println(CoinType.priceOf(50).getJpName());
 System.out.println(CoinType.priceOf(60).getJpName());
 ```
+
 実行結果:
-```output
+
+``` output
 50円玉
 存在しない
 ```
 
+### 凝集度を考えて
+
+以下は、enum 的な話を越えた、設計的な余談になる。
+
+クラス設計を考えると、凝集度を高めるために、getter を外部に漏らしたくない。そうすると、enum と enum を使う側のコードは次のようになる。
+
+```java title="Cointype.java"
+enum CoinType {
+
+    // ・・・
+
+    public static CoinType priceOf(int price) {
+        return Arrays.stream(CoinType.values()).filter(e -> price == e.getPrice()).findFirst().orElse(CoinType.UNKNOWN);
+    }
+
+    public static String getJpNameFromPriceOf(int price) {
+        return priceOf(price).getJpName();
+    }
+
+}
+
+``` 
+```java
+System.out.println(CoinType.getJpNameFromPriceOf(50));
+System.out.println(CoinType.getJpNameFromPriceOf(60));
+```
+
 ## まとめ
+
 Enum の各値には複数の値を対応づけることができる。static メソッドを自作することで、値から逆引きして enum 値（インスタンス）を取得することもできる。
 
 この機能を使えば、アプリ内での設定値の管理が楽になり、処理の見通しも良くなる。
