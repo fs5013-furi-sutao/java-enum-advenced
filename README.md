@@ -113,7 +113,9 @@ Stream API とラムダ式を使うと上記のコードは次のように書き
 
 ``` java
 Arrays.stream(CoinType.values())
-    .forEach(e -> System.out.printf("%5s: %3d%n", e.getJpName(), e.getPrice()));
+    .forEach(e -> 
+        System.out.printf("%5s: %3d%n", e.getJpName(), e.getPrice())
+    );
 ```
 
 ## 金額から enum 値を返すメソッドを追加する
@@ -181,10 +183,13 @@ System.out.println(CoinType.priceOf(60).getJpName());
 ```java title="Cointype.java"
 enum CoinType {
 
-    // ・・・
+    // ・・・中略
 
     public static CoinType priceOf(int price) {
-        return Arrays.stream(CoinType.values()).filter(e -> price == e.getPrice()).findFirst().orElse(CoinType.UNKNOWN);
+        return Arrays.stream(CoinType.values())
+            .filter(e -> price == e.getPrice())
+            .findFirst()
+            .orElse(CoinType.UNKNOWN);
     }
 
     public static String getJpNameFromPriceOf(int price) {
